@@ -68,10 +68,10 @@ public class EventListener extends ListenerAdapter {
                         event.getChannel().sendMessage(String.format("%s I'm sorry, the game has already started ", author.getAsMention())).queue();
                         break;
                     }
-                    /*if(game.isInTheGame(author)) {
+                    if(game.isInTheGame(author)) {
                         event.getChannel().sendMessage(String.format("%s you're already in the game", author.getAsMention())).queue();
                         break;
-                    }*/
+                    }
                     game.addPlayer(new Player(event.getAuthor()));
                     messageToSend = String.format("%s has joined the game: %d places remaining", author.getAsMention(), game.placesRemaining());
                     event.getChannel().sendMessage(messageToSend).queue();
