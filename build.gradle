@@ -35,3 +35,8 @@ dependencies {
 task stage {
     println 'Yoann <3'
 }
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
