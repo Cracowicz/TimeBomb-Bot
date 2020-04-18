@@ -10,10 +10,6 @@ buildscript {
     }
 }
 
-task stage {
-    println 'Yoann <3'
-}
-
 plugins {
     id 'java'
     id 'application'
@@ -34,4 +30,8 @@ repositories {
 
 dependencies {
     implementation 'net.dv8tion:JDA:4.1.1_135'
+}
+
+task stage {
+    println 'Yoann <3'
 }
