@@ -1,1 +1,1 @@
-Worker: java -jar build\libs\TimeBombBot-1.0-SNAPSHOT-all.jar
+Worker: java -jar build/libs/TimeBombBot-1.0-SNAPSHOT-all.jar
