@@ -32,9 +32,8 @@ dependencies {
     implementation 'net.dv8tion:JDA:4.1.1_135'
 }
 
-task stage {
-    println 'Yoann <3'
-}
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
