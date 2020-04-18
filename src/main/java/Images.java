@@ -1,10 +1,10 @@
 import java.io.File;
 
 public class Images {
-    public static final File NEUTRAL = new File("src\\main\\resources\\neutral.png");
-    public static final File DEFUSE = new File("src\\main\\resources\\defuse.png");
+    public static final File NEUTRAL = new File("src/main/resources/neutral.png");
+    public static final File DEFUSE = new File("src/main/resources/defuse.png");
     //public static final File BOMB = new File("src\\main\\resources\\bomb.png");
-    public static final String CARDS = "src\\main\\resources\\%s.png";
+    public static final String CARDS = "src/main/resources/%s.png";
     public static final String[] BOMB = {"\nhttps://giphy.com/gifs/acid-october-gifdump-g7L8PpcwQl3MY",
             "https://giphy.com/gifs/bomb-atomic-XUFPGrX5Zis6Y",
             "https://giphy.com/gifs/fail-crazy-boom-uNtESYuFhf7c4",
