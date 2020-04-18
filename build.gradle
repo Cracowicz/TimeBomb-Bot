@@ -1,0 +1,34 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
+        classpath 'net.dv8tion:JDA:4.1.1_135'
+    }
+}
+
+
+plugins {
+    id 'java'
+    id 'application'
+    id "com.github.johnrengelman.shadow" version "5.2.0"
+}
+
+apply plugin: "com.github.johnrengelman.shadow"
+// Include dependent libraries in archive.
+mainClassName = "Main"
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    implementation 'net.dv8tion:JDA:4.1.1_135'
+}
