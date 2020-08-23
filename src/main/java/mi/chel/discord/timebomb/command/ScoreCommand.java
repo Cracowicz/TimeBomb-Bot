@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-public class ScoreCommand extends Command {
+public class ScoreCommand extends AbstractBotCommand {
 
     private static final String LABEL = "score";
     private static final String DESCRIPTION = "Show players score.";

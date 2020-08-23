@@ -1,15 +1,14 @@
 package mi.chel.discord.timebomb.command;
 
-import mi.chel.discord.timebomb.Game;
+import mi.chel.discord.timebomb.game.Game;
 import mi.chel.discord.timebomb.Message;
 import mi.chel.discord.timebomb.TimeBombBot;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 
-public class StopCommand extends Command {
+public class StopCommand extends AbstractBotCommand {
 
     private static final String LABEL = "stop";
     private static final String DESCRIPTION = "Stop the current game.";
@@ -26,16 +25,12 @@ public class StopCommand extends Command {
             Message.noGameToStop(channel);
             return;
         }
-        if (game.getOwnerId() != user.getIdLong()) {
-            User owner = Objects.requireNonNull(bot.getJda().getUserById(game.getOwnerId()));
-            Message.onlyOwnerCanStopGame(channel, owner);
-            return;
-        }
-        bot.removeGame(game.getChannelId());
+        bot.removeGame(game.getId());
+        Message.gameStopped(channel);
     }
 
     @Override
-    boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
+    public boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
         return this.getBot().getGame(channel.getIdLong()) != null;
     }
 }

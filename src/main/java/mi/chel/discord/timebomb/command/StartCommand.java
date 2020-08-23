@@ -1,6 +1,6 @@
 package mi.chel.discord.timebomb.command;
 
-import mi.chel.discord.timebomb.Game;
+import mi.chel.discord.timebomb.game.Game;
 import mi.chel.discord.timebomb.Message;
 import mi.chel.discord.timebomb.TimeBombBot;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-public class StartCommand extends Command {
+public class StartCommand extends AbstractBotCommand {
 
     private static final String LABEL = "start";
     private static final String DESCRIPTION = "Start the current game.";
@@ -37,7 +37,7 @@ public class StartCommand extends Command {
     }
 
     @Override
-    boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
+    public boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
         Game game = this.getBot().getGame(channel.getIdLong());
         return game != null && game.getState() == Game.State.WAITING;
     }

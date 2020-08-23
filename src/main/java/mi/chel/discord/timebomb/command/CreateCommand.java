@@ -1,8 +1,9 @@
 package mi.chel.discord.timebomb.command;
 
-import mi.chel.discord.timebomb.ClassicGame;
-import mi.chel.discord.timebomb.EvolutionGame;
-import mi.chel.discord.timebomb.Game;
+import mi.chel.discord.timebomb.game.ClassicGame;
+import mi.chel.discord.timebomb.player.DiscordPlayer;
+import mi.chel.discord.timebomb.game.EvolutionGame;
+import mi.chel.discord.timebomb.game.Game;
 import mi.chel.discord.timebomb.Message;
 import mi.chel.discord.timebomb.TimeBombBot;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -10,11 +11,12 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-public class CreateCommand extends Command {
+public class CreateCommand extends AbstractBotCommand {
 
     private static final String LABEL = "create";
     private static final String DESCRIPTION = "Create a game on the current channel.";
-    private static final String USAGE = "{label} [evo]";
+    private static final String EVO_ARG = "evo";
+    private static final String USAGE = "{label} [" + EVO_ARG + "]";
 
     public CreateCommand(TimeBombBot bot) {
         super(bot, LABEL, DESCRIPTION, USAGE);
@@ -25,24 +27,22 @@ public class CreateCommand extends Command {
         long channelId = channel.getIdLong();
         TimeBombBot bot = this.getBot();
         if (bot.getGame(channelId) != null) {
-            Message.gameAlreadyExist(channel);
+            user.openPrivateChannel().queue(Message::gameAlreadyExist);
             return;
         }
-
-        long ownerId = user.getIdLong();
         Game game;
-        if (args.length == 1 && args[0].toLowerCase().equals("evo")) {
-            game = new EvolutionGame(bot, channelId, ownerId);
+        if (args.length == 1 && args[0].toLowerCase().equals(EVO_ARG)) {
+            game = new EvolutionGame(bot, channelId);
         } else {
-            game = new ClassicGame(bot, channelId, ownerId);
+            game = new ClassicGame(bot, channelId);
         }
-        game.join(ownerId);
+        game.addPlayer(new DiscordPlayer(bot, user.getIdLong()));
         bot.addGame(game);
         Message.gameCreated(channel, game);
     }
 
     @Override
-    boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
+    public boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
         return this.getBot().getGame(channel.getIdLong()) == null;
     }
 }

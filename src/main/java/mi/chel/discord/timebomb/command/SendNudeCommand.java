@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-public class SendNudeCommand extends Command {
+public class SendNudeCommand extends AbstractBotCommand {
 
     private static final String LABEL = "sendnude";
     private static final String DESCRIPTION = "NSFW";
@@ -23,7 +23,7 @@ public class SendNudeCommand extends Command {
     }
 
     @Override
-    boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
+    public boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
         return false;
     }
 }

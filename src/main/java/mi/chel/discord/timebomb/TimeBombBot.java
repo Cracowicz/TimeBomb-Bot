@@ -1,6 +1,9 @@
 package mi.chel.discord.timebomb;
 
 import mi.chel.discord.timebomb.command.Command;
+import mi.chel.discord.timebomb.command.CommandHandler;
+import mi.chel.discord.timebomb.game.Game;
+import mi.chel.discord.timebomb.game.GameHandler;
 import net.dv8tion.jda.api.JDA;
 
 import javax.annotation.Nonnull;
@@ -9,7 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TimeBombBot {
+public class TimeBombBot implements GameHandler, CommandHandler {
 
     private JDA jda;
     private Map<Long, Game> gameMap;
@@ -29,41 +32,46 @@ public class TimeBombBot {
         this.jda = jda;
     }
 
-    public Collection<Command> getCommands() {
+    public Collection<? extends Command> getCommands() {
         return this.commandMap.values();
     }
 
     @Nullable
+    @Override
     public Command getCommand(String name) {
         return this.commandMap.get(name.toLowerCase());
     }
 
+    @Override
     public void addCommand(@Nonnull Command command) {
         String label = command.getLabel();
         if (this.commandMap.containsKey(label)) {
-            throw new RuntimeException(String.format("Duplicated command '%s'", label));
+            throw new IllegalStateException(String.format("Duplicated command '%s'", label));
         }
         this.commandMap.put(label, command);
     }
 
     @Nullable
+    @Override
     @SuppressWarnings("unchecked")
-    public <G extends Game> G getGame(Long channelId) {
-        return (G) this.gameMap.get(channelId);
+    public <G extends Game> G getGame(long id) {
+        return (G) this.gameMap.get(id);
     }
 
+    @Override
     public void addGame(@Nonnull Game game) {
-        Long channelId = game.getChannelId();
+        Long channelId = game.getId();
         if (this.gameMap.containsKey(channelId)) {
-            throw new RuntimeException("Trying to run game in the same channel.");
+            throw new IllegalStateException("Trying to run game with the same id.");
         }
         this.gameMap.put(channelId, game);
     }
 
-    public void removeGame(@Nonnull Long channelId) {
-        if (!this.gameMap.containsKey(channelId)) {
-            throw new RuntimeException("No created game in the current channel !");
+    @Override
+    public void removeGame(@Nonnull Long id) {
+        if (!this.gameMap.containsKey(id)) {
+            throw new IllegalStateException("No created game with this id !");
         }
-        this.gameMap.remove(channelId);
+        this.gameMap.remove(id);
     }
 }

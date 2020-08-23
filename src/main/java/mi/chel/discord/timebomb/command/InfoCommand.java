@@ -1,6 +1,6 @@
 package mi.chel.discord.timebomb.command;
 
-import mi.chel.discord.timebomb.Game;
+import mi.chel.discord.timebomb.game.Game;
 import mi.chel.discord.timebomb.Message;
 import mi.chel.discord.timebomb.TimeBombBot;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-public class InfoCommand extends Command {
+public class InfoCommand extends AbstractBotCommand {
 
     private static final String LABEL = "info";
     private static final String DESCRIPTION = "Show information about the current game.";
@@ -33,7 +33,7 @@ public class InfoCommand extends Command {
     }
 
     @Override
-    boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
+    public boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
         return this.getBot().getGame(channel.getIdLong()) != null;
     }
 }

@@ -1,6 +1,6 @@
 package mi.chel.discord.timebomb;
 
-import mi.chel.discord.timebomb.command.Command;
+import mi.chel.discord.timebomb.command.AbstractBotCommand;
 import mi.chel.discord.timebomb.command.CreateCommand;
 import mi.chel.discord.timebomb.command.CutCommand;
 import mi.chel.discord.timebomb.command.GameboardCommand;
@@ -15,6 +15,7 @@ import mi.chel.discord.timebomb.command.ScoreCommand;
 import mi.chel.discord.timebomb.command.SendNudeCommand;
 import mi.chel.discord.timebomb.command.StartCommand;
 import mi.chel.discord.timebomb.command.StopCommand;
+import mi.chel.discord.timebomb.command.TestCommand;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 
@@ -22,10 +23,15 @@ import javax.security.auth.login.LoginException;
 
 public class Main {
 
-    public static void main(String[] args) throws LoginException
-    {
+    private static TimeBombBot bot;
+
+    public static TimeBombBot getBot() {
+        return Main.bot;
+    }
+
+    public static void main(String[] args) throws LoginException {
         String token = System.getenv("TimeBombToken");
-        TimeBombBot bot = new TimeBombBot();
+        Main.bot = new TimeBombBot();
 
         bot.addCommand(new CreateCommand(bot));
         bot.addCommand(new CutCommand(bot));
@@ -40,13 +46,14 @@ public class Main {
         bot.addCommand(new SendNudeCommand(bot));
         bot.addCommand(new StartCommand(bot));
         bot.addCommand(new StopCommand(bot));
+        bot.addCommand(new TestCommand(bot));
 
-        Command helpCommand = new HelpCommand(bot);
+        AbstractBotCommand helpCommand = new HelpCommand(bot);
         bot.addCommand(helpCommand);
 
         bot.setJda(JDABuilder.createDefault(token)
                 .addEventListeners(new EventListener(bot))
-                .setActivity(Activity.playing(String.format("%s%s", Command.PREFIX, helpCommand.getLabel())))
+                .setActivity(Activity.playing(String.format("%s%s", AbstractBotCommand.PREFIX, helpCommand.getLabel())))
                 .build());
     }
 }

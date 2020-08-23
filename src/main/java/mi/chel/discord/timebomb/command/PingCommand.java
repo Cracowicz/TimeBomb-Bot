@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-public class PingCommand extends Command {
+public class PingCommand extends AbstractBotCommand {
 
     private static final String LABEL = "ping";
     private static final String DESCRIPTION = "Pong";
@@ -22,7 +22,7 @@ public class PingCommand extends Command {
     }
 
     @Override
-    boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
+    public boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
         return false;
     }
 }

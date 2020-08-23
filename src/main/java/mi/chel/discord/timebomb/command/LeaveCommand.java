@@ -1,14 +1,15 @@
 package mi.chel.discord.timebomb.command;
 
-import mi.chel.discord.timebomb.Game;
+import mi.chel.discord.timebomb.game.Game;
 import mi.chel.discord.timebomb.Message;
+import mi.chel.discord.timebomb.player.Player;
 import mi.chel.discord.timebomb.TimeBombBot;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-public class LeaveCommand extends Command {
+public class LeaveCommand extends AbstractBotCommand {
 
     private static final String LABEL = "leave";
     private static final String DESCRIPTION = "Leave the current game.";
@@ -28,16 +29,18 @@ public class LeaveCommand extends Command {
             Message.leaveStartedGame(channel);
             return;
         }
-        if (!game.isPlayer(user.getIdLong())) {
+        long userId = user.getIdLong();
+        Player player = game.getPlayer(userId);
+        if (player == null) {
             Message.notInGame(channel);
             return;
         }
-        game.leave(user.getIdLong());
-        Message.playerLeaveGame(channel, user, game);
+        game.removePlayer(player);
+        Message.playerLeaveGame(channel, player, game);
     }
 
     @Override
-    boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
+    public boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
         Game game = this.getBot().getGame(channel.getIdLong());
         return game != null && game.getState() != Game.State.PLAYING;
     }

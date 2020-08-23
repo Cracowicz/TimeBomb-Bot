@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-public class HelloCommand extends Command {
+public class HelloCommand extends AbstractBotCommand {
 
     private static final String LABEL = "hello";
     private static final String DESCRIPTION = "Just say ... hello";
@@ -18,13 +18,11 @@ public class HelloCommand extends Command {
 
     @Override
     public void onExecute(@Nonnull User user, @Nonnull MessageChannel channel, @Nonnull String[] args) {
-        user.openPrivateChannel().queue(privateChannel -> {
-            Message.hello(privateChannel, user);
-        });
+        user.openPrivateChannel().queue(privateChannel -> Message.hello(privateChannel, user));
     }
 
     @Override
-    boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
+    public boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
         return false;
     }
 }

@@ -1,5 +1,6 @@
 package mi.chel.discord.timebomb;
 
+import mi.chel.discord.timebomb.command.AbstractBotCommand;
 import mi.chel.discord.timebomb.command.Command;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Message;
@@ -22,7 +23,7 @@ public class EventListener extends ListenerAdapter {
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
         MessageChannel channel = event.getChannel();
         ChannelType type = channel.getType();
-        if (type != ChannelType.TEXT && type != ChannelType.PRIVATE) {
+        if (type != ChannelType.TEXT) {
             return;
         }
 
@@ -33,17 +34,18 @@ public class EventListener extends ListenerAdapter {
 
         Message message = event.getMessage();
         String contentRaw = message.getContentRaw();
-        if (!contentRaw.startsWith(Command.PREFIX)) {
+        if (!contentRaw.startsWith(AbstractBotCommand.PREFIX)) {
             return;
         }
 
-        String[] args = contentRaw.substring(Command.PREFIX.length()).split(" ");
-        Command command = this.bot.getCommand(args[0]);
+        String[] splitContent = contentRaw.substring(AbstractBotCommand.PREFIX.length()).split("[ ]+");
+        String[] args = new String[splitContent.length - 1];
+        System.arraycopy(splitContent, 1, args, 0, args.length);
+
+        Command command = this.bot.getCommand(splitContent[0]);
         if (command != null) {
             command.onExecute(author, channel, args);
-            if (type != ChannelType.PRIVATE) {
-                message.delete().queue();
-            }
+            message.delete().queue();
         }
     }
 }

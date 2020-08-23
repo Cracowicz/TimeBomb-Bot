@@ -8,11 +8,12 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 import java.awt.Color;
-public class HelpCommand extends Command  {
+public class HelpCommand extends AbstractBotCommand {
 
     private static final String LABEL = "help";
     private static final String DESCRIPTION = "Show this help message.";
-    private static final String USAGE = "{label} [all]";
+    private static final String ALL_ARG = "all";
+    private static final String USAGE = "{label} [" + ALL_ARG + "]";
     private static final String GAME_INFO = "Each player will be assigned a secret identity, Agent or Terrorist.\n" +
             "The game will unroll in a maximum of four rounds in which the agents want to defuse the bomb and the terrorists want it to explode.\n" +
             "Each player will be dealt wire cards, which he will see and then will shuffle. Starting with the first player, he will be choosing a secret card and play it. Each card will have an action. Players will follow this way doing actions to try and defuse or explode the bomb.\n" +

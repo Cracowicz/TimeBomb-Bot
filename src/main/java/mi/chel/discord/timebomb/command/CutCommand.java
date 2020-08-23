@@ -1,6 +1,7 @@
 package mi.chel.discord.timebomb.command;
 
-import mi.chel.discord.timebomb.Game;
+import mi.chel.discord.timebomb.player.Player;
+import mi.chel.discord.timebomb.game.Game;
 import mi.chel.discord.timebomb.Message;
 import mi.chel.discord.timebomb.TimeBombBot;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -8,15 +9,17 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CutCommand extends Command {
+public class CutCommand extends AbstractBotCommand {
 
-    private static final String LABEL = "cut";
+    public static final String LABEL = "cut";
     private static final String DESCRIPTION = "Cut the cable with id. (e.g {prefix}{label} 5)";
-    private static final String USAGE = "{label} <id>";
+    private static final String USAGE = "<@player> <id>";
 
-    private static Predicate<String> ID_PREDICATE = Pattern.compile("^\\d+$").asPredicate();
+    private static Pattern MENTION_PATTERN = Pattern.compile("^<@!(\\d{1,18})>$");
+    private static Predicate<String> ID_PREDICATE = Pattern.compile("^\\d{1}$").asPredicate();
 
     public CutCommand(TimeBombBot bot) {
         super(bot, LABEL, DESCRIPTION, USAGE);
@@ -26,27 +29,48 @@ public class CutCommand extends Command {
     public void onExecute(@Nonnull User user, @Nonnull MessageChannel channel, @Nonnull String[] args) {
         Game game = this.getBot().getGame(channel.getIdLong());
         if (game == null) {
-            Message.noGameCreated(channel);
+            user.openPrivateChannel().queue(Message::noGameCreated);
             return;
         }
         if (game.getState() != Game.State.PLAYING) {
-            Message.gameNotStarted(channel);
+            user.openPrivateChannel().queue(Message::gameNotStarted);
             return;
         }
-        if (user.getIdLong() != game.getCurrentPlayerId()) {
-            Message.notYourTurn(channel);
+        Player currentPlayer = game.getCurrentPlayer();
+        if (currentPlayer == null || user.getIdLong() != currentPlayer.getId()) {
+            user.openPrivateChannel().queue(Message::notYourTurn);
             return;
         }
-        if (args.length < 2 || ID_PREDICATE.test(args[0])) {
-            Message.invalidCutId(channel, this);
+        // Arg 0
+        Matcher matcher = args.length < 1 ? null : MENTION_PATTERN.matcher(args[0]);
+        if (matcher == null || !matcher.find()) {
+            user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage("You must mention a player !").queue());
             return;
         }
-        int id = Integer.parseInt(args[0]);
-        game.cut(id);
+        Player player = game.getPlayer(Long.parseLong(matcher.group(1)));
+        if (player == null) {
+            user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(String.format("'%s' is not in the game !", args[0])).queue());
+            return;
+        }
+        if (player == game.getCurrentPlayer()) {
+            user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage("You can not cut a card in your hand !").queue());
+            return;
+        }
+        // Arg 2
+        if (args.length < 3 || !ID_PREDICATE.test(args[1])) {
+            user.openPrivateChannel().queue(Message::invalidCutId);
+            return;
+        }
+        int id = Integer.parseInt(args[1]);
+        if (id > player.getCardCount()) {
+            user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(String.format("%d is invalid", id)).queue());
+            return;
+        }
+        game.cut(player, id);
     }
 
     @Override
-    boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
+    public boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
         return this.getBot().getGame(channel.getIdLong()) != null;
     }
 }

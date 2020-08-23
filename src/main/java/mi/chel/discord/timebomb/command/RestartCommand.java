@@ -1,6 +1,6 @@
 package mi.chel.discord.timebomb.command;
 
-import mi.chel.discord.timebomb.Game;
+import mi.chel.discord.timebomb.game.Game;
 import mi.chel.discord.timebomb.Message;
 import mi.chel.discord.timebomb.TimeBombBot;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-public class RestartCommand extends Command {
+public class RestartCommand extends AbstractBotCommand {
 
     private static final String LABEL = "restart";
     private static final String DESCRIPTION = "Restart with same players and configuration.";
@@ -38,7 +38,7 @@ public class RestartCommand extends Command {
     }
 
     @Override
-    boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
+    public boolean isVisible(@Nonnull User user, @Nonnull MessageChannel channel) {
         Game game = this.getBot().getGame(channel.getIdLong());
         return game != null && game.getState() == Game.State.ENDING;
     }
